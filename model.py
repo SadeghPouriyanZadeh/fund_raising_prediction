@@ -1,11 +1,14 @@
 from torch import nn
 
-class CancerDetector(nn.Module):
-    def __init__(self) -> None:
+class IcoPredictor(nn.Module):
+    def __init__(self, features, shallow_nodes) -> None:
         super().__init__()
-        self.linear = nn.Linear(15, 1)
-        self.sigmoid = nn.Sigmoid()
+        self.regressor = nn.Sequential(
+            nn.Linear(features, shallow_nodes),
+            nn.ReLU(),
+            nn.Linear(shallow_nodes, 1),
+            nn.ReLU(),
+
+        )
     def forward(self, x):
-        x = self.linear(x)
-        x = self.sigmoid(x)
-        return x
+        return self.regressor(x)

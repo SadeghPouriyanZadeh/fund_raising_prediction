@@ -1,15 +1,20 @@
-from torch.utils.data import Dataset
+from pathlib import Path
+
 from pandas import DataFrame
+from sklearn.preprocessing import Normalizer, OneHotEncoder, OrdinalEncoder
+from torch.utils.data import Dataset
 import numpy as np
+from data_processing import get_processed_data
+
 
 class IcoDataset(Dataset):
-    def __init__(self, df: DataFrame):
-        self.df_x = df.drop(columns=["Total amount raised (USDm)"])
-        self.df_y = df["Total amount raised (USDm)"]
-        self._length = len(self.df_x)
+    def __init__(self, x_ndarray, y_ndarray):
+        self.x_ndarray = x_ndarray.astype(np.float32)
+        self.y_ndarray = y_ndarray.astype(np.float32)
+        self._length = self.x_ndarray.shape[0]
+
     def __len__(self):
         return self._length
+
     def __getitem__(self, idx):
-        x = self.df_x.iloc[idx].to_numpy().astype(np.float32)
-        y = self.df_y.iloc[idx].astype(np.float32)
-        return x, y
+        return self.x_ndarray[idx, :], self.y_ndarray[idx, :]

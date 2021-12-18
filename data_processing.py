@@ -1,9 +1,8 @@
 import numpy as np
-import pandas as pd
 from sklearn.preprocessing import Normalizer, OneHotEncoder, OrdinalEncoder
+import pandas as pd
 
-
-def get_processed_data(ico_csv_path, normalize=True, one_hot_encoder=True):
+def get_processed_data(ico_csv_path, normalize=True, one_hot_encode=True):
     df = pd.read_csv(ico_csv_path)
     df_x = df.drop(columns=["Total amount raised (USDm)"])
     df_y = df["Total amount raised (USDm)"]
@@ -14,7 +13,7 @@ def get_processed_data(ico_csv_path, normalize=True, one_hot_encoder=True):
             cat_cols.append(col)
         else:
             con_cols.append(col)
-    if one_hot_encoder:
+    if one_hot_encode:
         cats = OneHotEncoder(sparse=False).fit_transform(df_x[cat_cols])
     else:
         cats = OrdinalEncoder().fit_transform(df_x[cat_cols])
@@ -23,5 +22,5 @@ def get_processed_data(ico_csv_path, normalize=True, one_hot_encoder=True):
     else:
         cons = df_x[con_cols].to_numpy()
     x = np.concatenate((cats, cons), axis=1)
-    y = df_y.to_numpy()
+    y = df_y.to_numpy()[..., None]
     return x, y
