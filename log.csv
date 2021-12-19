@@ -1,0 +1,3 @@
+batch_size,hidden_layers,layer_units,learning_rate,normalize,one_hot_encode,epochs,data_path,device,val_loss,train_time
+32,4,16,0.09934529531923648,True,True,1000,dataset\ico_dataset_cleaned_v2.csv,cpu,21.700422964940103,73.76235914230347
+32,4,16,0.09934529531923648,False,True,1000,dataset\ico_dataset_cleaned_v2.csv,cpu,26.73942849015709,71.8658766746521
