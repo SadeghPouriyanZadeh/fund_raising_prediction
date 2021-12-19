@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 from model import IcoPredictor
 from torch.utils.data import DataLoader
 from itertools import product
-
+import pandas as pd
 
 def train_loop(model, dataloader, criterion, optimizer, device):
     mean_loss = 0
@@ -112,3 +112,34 @@ def param_generator():
         for i, key in enumerate(keys):
             data[key] = row[i]
         yield data
+
+
+class HyperParameterLogger:
+    def __init__(
+        self,
+        csv_file_path,
+    ):
+        self.csv_file_path = csv_file_path
+        self.history = {
+            "batch_size": [],
+            "hidden_layers": [],
+            "layer_units": [],
+            "learning_rate": [],
+            "normalize": [],
+            "one_hot_encode": [],
+            "epochs": [],
+            "data_path": [],
+            "device": [],
+            "val_loss": [],
+            "train_time": [],
+
+        }
+
+    def log(self, param_dict, val_loss, train_time):
+        self.history["val_loss"].append(val_loss)
+        self.history["train_time"].append(train_time)
+        for key in param_dict:
+            self.history[key].append(param_dict[key])
+        df = pd.DataFrame(self.history)
+        df.to_csv(self.csv_file_path, index=False)
+        return df
