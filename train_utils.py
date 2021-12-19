@@ -7,9 +7,10 @@ from torch.utils.data import DataLoader
 from itertools import product
 
 
-def train_loop(model, dataloader, criterion, optimizer):
+def train_loop(model, dataloader, criterion, optimizer, device):
     mean_loss = 0
     for x, y in dataloader:
+        x, y = x.to(device), y.to(device)
         pred = model(x)
         loss = criterion(pred, y)
         mean_loss += loss.item() / len(dataloader)
@@ -20,22 +21,24 @@ def train_loop(model, dataloader, criterion, optimizer):
 
 
 @torch.no_grad()
-def val_loop(model, dataloader, criterion):
+def val_loop(model, dataloader, criterion, device):
     mean_loss = 0
     for x, y in dataloader:
+        x, y = x.to(device), y.to(device)
         pred = model(x)
         loss = criterion(pred, y)
         mean_loss += loss.item() / len(dataloader)
     return mean_loss
 
 
-def train(epochs, model, train_dataloader, valid_dataloader, criterion, optimizer):
+def train(
+    epochs, model, train_dataloader, valid_dataloader, criterion, optimizer, device
+):
     train_losses = []
     val_losses = []
-
     for _ in range(epochs):
-        train_loss = train_loop(model, train_dataloader, criterion, optimizer)
-        val_loss = val_loop(model, valid_dataloader, criterion)
+        train_loss = train_loop(model, train_dataloader, criterion, optimizer, device)
+        val_loss = val_loop(model, valid_dataloader, criterion, device)
         train_losses.append(train_loss)
         val_losses.append(val_loss)
     return np.array(train_losses), np.array(val_losses)
@@ -44,6 +47,7 @@ def train(epochs, model, train_dataloader, valid_dataloader, criterion, optimize
 def run_with_kfold(
     data_path,
     epochs,
+    device,
     batch_size,
     hidden_layers,
     layer_units,
@@ -69,11 +73,17 @@ def run_with_kfold(
         test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
         model = IcoPredictor(
             x.shape[1], hidden_layers=hidden_layers, layer_units=layer_units
-        )
+        ).to(device)
         criterion = torch.nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         train_losses, val_losses = train(
-            epochs, model, train_dataloader, test_dataloader, criterion, optimizer
+            epochs,
+            model,
+            train_dataloader,
+            test_dataloader,
+            criterion,
+            optimizer,
+            device,
         )
         total_val_losses.append(min(val_losses))
     val_loss = np.sqrt(np.array(total_val_losses).mean())
