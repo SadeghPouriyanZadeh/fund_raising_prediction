@@ -4,6 +4,7 @@ class LinearReLU(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
         self.linear = nn.Linear(in_features, out_features)
+        nn.BatchNorm1d(out_features),
         self.relu = nn.ReLU()
     def forward(self, x):
         return self.relu(self.linear(x))
