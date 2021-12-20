@@ -1,11 +1,15 @@
-import torch
-import numpy as np
-from data import get_processed_data, IcoDataset
-from sklearn.model_selection import KFold
-from model import IcoPredictor
-from torch.utils.data import DataLoader
 from itertools import product
+
+import numpy as np
 import pandas as pd
+import torch
+from pandas import DataFrame
+from sklearn.model_selection import KFold
+from torch.utils.data import DataLoader
+
+from data import IcoDataset, get_processed_data
+from model import IcoPredictor
+
 
 def train_loop(model, dataloader, criterion, optimizer, device):
     mean_loss = 0
@@ -132,7 +136,6 @@ class HyperParameterLogger:
             "device": [],
             "val_loss": [],
             "train_time": [],
-
         }
 
     def log(self, param_dict, val_loss, train_time):
@@ -143,3 +146,10 @@ class HyperParameterLogger:
         df = pd.DataFrame(self.history)
         df.to_csv(self.csv_file_path, index=False)
         return df
+
+
+def find_best_hyperparameter(df: DataFrame, val_loss_label: str):
+    min_val_loss = min(df[val_loss_label])
+    min_val_loss_idx = np.where(df[val_loss_label] == min_val_loss)
+    hyper_parameters = df.values[min_val_loss_idx]
+    return hyper_parameters
