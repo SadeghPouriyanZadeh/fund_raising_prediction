@@ -18,7 +18,11 @@ def find_best_hyperparameters(
 
     x, y = get_processed_data(data_path)
     tuning_model = GridSearchCV(
-        regressor, param_grid=parameters, scoring=scoring, cv=5, verbose=1
+        regressor,
+        param_grid=parameters,
+        scoring=scoring,
+        cv=5,
+        verbose=1
     )
     tuning_model.fit(x, y)
     return tuning_model.best_params_
