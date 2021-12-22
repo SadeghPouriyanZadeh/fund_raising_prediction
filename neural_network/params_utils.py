@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from train_utils import run_with_kfold
+from neural_network.train_utils import run_with_kfold
 
 
 class HyperParameterLogger:
