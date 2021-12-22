@@ -8,7 +8,7 @@ from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader
 
 from data import IcoDataset, get_processed_data
-from model import IcoPredictor
+from neural_network.model import IcoPredictor
 
 
 def train_loop(model, dataloader, criterion, optimizer, device):
