@@ -6,7 +6,7 @@ from sklearn import tree
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, KFold
 
-from data import get_processed_data
+from dataset.data import get_processed_data
 
 
 def find_best_hyperparameter(

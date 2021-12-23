@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from data import IcoDataset, get_processed_data
+from dataset.data import IcoDataset, get_processed_data
 from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader
 
