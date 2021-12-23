@@ -54,6 +54,7 @@ def run_with_kfold(
     learning_rate,
     normalize,
     one_hot_encode,
+    **kwargs,
 ):
     x, y = get_processed_data(
         data_path, normalize=normalize, one_hot_encode=one_hot_encode
