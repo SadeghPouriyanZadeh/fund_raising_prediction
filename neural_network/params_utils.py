@@ -40,10 +40,10 @@ class HyperParameterLogger:
 
 def param_generator():
     params_values = {
-        "batch_size": [2 ** i for i in range(5, 8)],
-        "hidden_layers": [2 ** i for i in range(2, 5)],
-        "layer_units": [2 ** i for i in range(4, 8)],
-        "learning_rate": np.random.uniform(1e-5, 0.1, 5).tolist(),
+        "batch_size": [2 ** i for i in range(5, 7)],
+        "hidden_layers": [2 ** i for i in range(2, 4)],
+        "layer_units": [2 ** i for i in range(4, 7)],
+        "learning_rate": np.random.uniform(1e-5, 0.1, 3).tolist(),
         "normalize": [True, False],
         "one_hot_encode": [True, False],
     }
