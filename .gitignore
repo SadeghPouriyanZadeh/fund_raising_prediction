@@ -3,4 +3,5 @@ devbook*
 temp.py
 temp.ipynb
 report/~$report.docx
-
+*.zip
+*.pdf
