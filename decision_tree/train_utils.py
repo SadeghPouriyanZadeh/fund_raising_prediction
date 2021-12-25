@@ -34,19 +34,15 @@ def train_tree_with_kfold(
     x, y = get_processed_data(data_path)
     regressor = tree.DecisionTreeRegressor(**best_params)
     kf = KFold(n_splits=kflod_n_splits, shuffle=kfold_shuffle)
-    total_errors = []
-    total_scores = []
+    mean_val_loss = 0
+    for train_index, test_index in kf.split(x, y):
+        x_train = x[train_index, :]
+        x_test = x[test_index, :]
+        y_train = y[train_index, :]
+        y_test = y[test_index, :]
 
-    for _ in range(epochs):
-        for train_index, test_index in kf.split(x, y):
-            x_train = x[train_index, :]
-            x_test = x[test_index, :]
-            y_train = y[train_index, :]
-            y_test = y[test_index, :]
-
-            regressor = regressor.fit(x_train, y_train)
-            pred = regressor.predict(x_test)
-            error = mean_squared_error(y_test, pred) ** 0.5
-            total_errors.append(error)
-            total_scores.append(regressor.score(x_test, y_test))
-    return total_errors, total_scores
+        regressor = regressor.fit(x_train, y_train)
+        pred = regressor.predict(x_test)
+        error = mean_squared_error(y_test, pred) ** 0.5
+        mean_val_loss += error / 5
+    return mean_val_loss
