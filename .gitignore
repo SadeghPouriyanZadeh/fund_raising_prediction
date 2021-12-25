@@ -2,6 +2,6 @@ __pycache__
 devbook*
 temp.py
 temp.ipynb
-report/~$report.docx
+*.docx
 *.zip
 *.pdf
