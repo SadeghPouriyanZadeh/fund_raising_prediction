@@ -60,6 +60,8 @@ def run_with_kfold(
         data_path, normalize=normalize, one_hot_encode=one_hot_encode
     )
     kf5 = KFold(n_splits=5, shuffle=True)
+    folds_val_losses = []
+    folds_train_losses = []
     total_val_losses = []
     for train_index, test_index in kf5.split(x):
         x_train = x[train_index, :]
@@ -87,5 +89,8 @@ def run_with_kfold(
             device,
         )
         total_val_losses.append(min(val_losses))
-    val_loss = np.sqrt(np.array(total_val_losses).mean())
-    return val_loss
+        folds_val_losses.append(val_losses)
+        folds_train_losses.append(train_losses)
+    # val_loss is mean of 5 fold val losses
+    mean_val_loss = np.sqrt(np.array(total_val_losses).mean())
+    return mean_val_loss, folds_val_losses, folds_train_losses
