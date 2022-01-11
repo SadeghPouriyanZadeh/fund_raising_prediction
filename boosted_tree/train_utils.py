@@ -2,7 +2,7 @@ from itertools import product
 from pathlib import Path
 
 import numpy as np
-from dataset.data import get_processed_data
+from data_preprocess.data_utils import get_processed_data
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 
@@ -71,7 +71,7 @@ def train_with_kfold(x, y, params):
     return mean_val_loss
 
 
-def find_best_params(params_gen=param_generator()):
+def find_best_params(x, y, params_gen=param_generator()):
     min_error = float("inf")
     best_params = None
     for params in params_gen:

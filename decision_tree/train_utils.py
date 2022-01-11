@@ -2,11 +2,10 @@
 
 from pathlib import Path
 
+from data_preprocess.data_utils import get_processed_data
 from sklearn import tree
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, KFold
-
-from dataset.data import get_processed_data
 
 
 def find_best_hyperparameter(
@@ -25,10 +24,7 @@ def find_best_hyperparameter(
 
 
 def train_tree_with_kfold(
-    data_path,
-    kflod_n_splits=5,
-    kfold_shuffle=True,
-    **best_params
+    data_path, kflod_n_splits=5, kfold_shuffle=True, **best_params
 ):
     x, y = get_processed_data(data_path)
     regressor = tree.DecisionTreeRegressor(**best_params)

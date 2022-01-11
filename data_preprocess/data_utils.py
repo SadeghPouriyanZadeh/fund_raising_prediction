@@ -42,3 +42,22 @@ class IcoDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.x_ndarray[idx, :], self.y_ndarray[idx, :]
+
+def get_cleaned_ico_df(df, max_allowed_col_nan):
+    important_columns = [
+        "total_number_of_tokens",
+        "Whitepaper page count",
+        "Smart contract code available",
+        "Token share team (ex ante)",
+        "Token share producers/miners (ex ante)",
+        "Total amount raised (USDm)",
+        "Crowdsale max. discount (%)",
+        "price_crowdsale",
+        "Length of crowdsale (calendar days, planned)",
+    ]
+    nans = df.isna()
+    cols_nan_fraction = nans.sum(axis=0) / nans.shape[0]
+    low_nan_cols = cols_nan_fraction[cols_nan_fraction < max_allowed_col_nan].index
+    valid_cols = set(low_nan_cols.tolist() + important_columns)
+    cleaned_df = df[valid_cols].dropna()
+    return cleaned_df
