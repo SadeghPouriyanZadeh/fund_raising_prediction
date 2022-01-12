@@ -7,7 +7,13 @@ from sklearn.preprocessing import Normalizer, OneHotEncoder, OrdinalEncoder
 from torch.utils.data import Dataset
 
 
-def get_processed_data(ico_csv_path,drop_features_list, target_feature, normalize=True, one_hot_encode=True, ):
+def get_processed_data(
+    ico_csv_path,
+    drop_features_list,
+    target_feature,
+    normalize=True,
+    one_hot_encode=True,
+):
     df = pd.read_csv(ico_csv_path)
     df_x = df.drop(columns=drop_features_list)
     df_y = df[target_feature]
@@ -43,18 +49,8 @@ class IcoDataset(Dataset):
     def __getitem__(self, idx):
         return self.x_ndarray[idx, :], self.y_ndarray[idx, :]
 
-def get_cleaned_ico_df(df, max_allowed_col_nan):
-    important_columns = [
-        "total_number_of_tokens",
-        "Whitepaper page count",
-        "Smart contract code available",
-        "Token share team (ex ante)",
-        "Token share producers/miners (ex ante)",
-        "Total amount raised (USDm)",
-        "Crowdsale max. discount (%)",
-        "price_crowdsale",
-        "Length of crowdsale (calendar days, planned)",
-    ]
+
+def get_cleaned_ico_df(df, max_allowed_col_nan, important_columns: list):
     nans = df.isna()
     cols_nan_fraction = nans.sum(axis=0) / nans.shape[0]
     low_nan_cols = cols_nan_fraction[cols_nan_fraction < max_allowed_col_nan].index
