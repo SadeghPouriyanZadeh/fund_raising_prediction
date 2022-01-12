@@ -7,10 +7,10 @@ from sklearn.preprocessing import Normalizer, OneHotEncoder, OrdinalEncoder
 from torch.utils.data import Dataset
 
 
-def get_processed_data(ico_csv_path, normalize=True, one_hot_encode=True):
+def get_processed_data(ico_csv_path,drop_features_list, target_feature, normalize=True, one_hot_encode=True, ):
     df = pd.read_csv(ico_csv_path)
-    df_x = df.drop(columns=["Total amount raised (USDm)"])
-    df_y = df["Total amount raised (USDm)"]
+    df_x = df.drop(columns=drop_features_list)
+    df_y = df[target_feature]
     cat_cols = []
     con_cols = []
     for col in df_x.columns:
