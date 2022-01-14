@@ -69,7 +69,9 @@ def find_best_hyperparameter(df: DataFrame, val_loss_label: str):
     return hyper_parameters, min_val_loss_idx
 
 
-def tune_hyperparameters(data_path, log_path, epochs, device, params):
+def tune_hyperparameters(
+    data_path, target_feature, drop_feature_list, log_path, epochs, device, params
+):
     logger = HyperParameterLogger(log_path)
     for param_dict in params:
         param_dict["epochs"] = epochs
@@ -77,7 +79,11 @@ def tune_hyperparameters(data_path, log_path, epochs, device, params):
         param_dict["device"] = device
         print(param_dict)
         tic = time.time()
-        val_loss = run_with_kfold(**param_dict)
+        val_loss = run_with_kfold(
+            target_feature=target_feature,
+            drop_features_list=drop_feature_list,
+            **param_dict
+        )
         toc = time.time()
         print("validation loss :", val_loss)
         print("time length for one fold :", toc - tic)

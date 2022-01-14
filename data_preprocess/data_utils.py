@@ -8,15 +8,17 @@ from torch.utils.data import Dataset
 
 
 def get_processed_data(
-    ico_csv_path,
-    drop_features_list,
+    csv_path,
     target_feature,
-    normalize=True,
     one_hot_encode=True,
+    drop_features_list=None,
 ):
-    df = pd.read_csv(ico_csv_path)
-    df_x = df.drop(columns=drop_features_list)
+    df = pd.read_csv(csv_path)
+    df_x = df.drop(columns=[target_feature])
     df_y = df[target_feature]
+    if drop_features_list is not None:
+        df_x = df.drop(columns=drop_features_list)
+
     cat_cols = []
     con_cols = []
     for col in df_x.columns:
@@ -28,10 +30,7 @@ def get_processed_data(
         cats = OneHotEncoder(sparse=False).fit_transform(df_x[cat_cols])
     else:
         cats = OrdinalEncoder().fit_transform(df_x[cat_cols])
-    if normalize:
-        cons = Normalizer().fit_transform(df_x[con_cols])
-    else:
-        cons = df_x[con_cols].to_numpy()
+    cons = df_x[con_cols].to_numpy()
     x = np.concatenate((cats, cons), axis=1)
     y = df_y.to_numpy()[..., None]
     return x, y

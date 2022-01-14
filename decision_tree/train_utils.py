@@ -11,11 +11,13 @@ from sklearn.model_selection import GridSearchCV, KFold
 def find_best_hyperparameter(
     data_path,
     regressor,
+    target_feature,
     parameters: dict,
     scoring="neg_mean_squared_error",
+    
 ):
 
-    x, y = get_processed_data(data_path)
+    x, y = get_processed_data(data_path, target_feature)
     tuning_model = GridSearchCV(
         regressor, param_grid=parameters, scoring=scoring, cv=5, verbose=1
     )
@@ -24,12 +26,13 @@ def find_best_hyperparameter(
 
 
 def train_tree_with_kfold(
-    data_path, kflod_n_splits=5, kfold_shuffle=True, **best_params
+    data_path,target_feature, kflod_n_splits, kfold_shuffle=True, **best_params, 
 ):
-    x, y = get_processed_data(data_path)
+    x, y = get_processed_data(data_path, target_feature)
     regressor = tree.DecisionTreeRegressor(**best_params)
     kf = KFold(n_splits=kflod_n_splits, shuffle=kfold_shuffle)
     error = 0
+    fold_errors = []
     for train_index, test_index in kf.split(x, y):
         x_train = x[train_index, :]
         x_test = x[test_index, :]
@@ -39,5 +42,6 @@ def train_tree_with_kfold(
         regressor = regressor.fit(x_train, y_train)
         pred = regressor.predict(x_test)
         fold_error = mean_squared_error(y_test, pred) ** 0.5
-        error += fold_error / 5
-    return error
+        error += fold_error / kflod_n_splits
+        fold_errors.append(fold_error)
+    return error, fold_errors

@@ -47,10 +47,11 @@ def param_generator():
         yield data
 
 
-def train_with_kfold(x, y, params):
-    kf5 = KFold(n_splits=5, shuffle=True)
+def train_with_kfold(x, y, params, n_splits):
+    kf = KFold(n_splits, shuffle=True)
     mean_val_loss = 0
-    for train_index, test_index in kf5.split(x):
+    kfold_errors = []
+    for train_index, test_index in kf.split(x):
         x_train = x[train_index, :]
         x_test = x[test_index, :]
         y_train = y[train_index, :]
@@ -67,8 +68,9 @@ def train_with_kfold(x, y, params):
         )
         pred = model.predict(x_test)
         error = mean_squared_error(y_test, pred) ** 0.5
-        mean_val_loss += error / 5
-    return mean_val_loss
+        mean_val_loss += error / n_splits
+        kfold_errors.append(error)
+    return mean_val_loss, kfold_errors
 
 
 def find_best_params(x, y, params_gen=param_generator()):
