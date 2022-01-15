@@ -117,30 +117,20 @@ def run_with_kfold(
     return mean_val_loss, folds_val_losses, folds_train_losses
 
 
-def run(
-    data_path,
-    target_feature,
+def train_nn(
+    x,
+    y,
     epochs,
     device,
     batch_size,
     hidden_layers,
     layer_units,
     learning_rate,
-    normalize,
-    one_hot_encode,
-    drop_features_list,
-    test_size,
-    random_state=42,
+    test_size=0.2,
+    random_state=1,
     verbose=True,
     **kwargs,
 ):
-    x, y = get_processed_data(
-        data_path,
-        target_feature=target_feature,
-        normalize=normalize,
-        one_hot_encode=one_hot_encode,
-        drop_features_list=drop_features_list,
-    )
     folds_val_losses = []
     folds_train_losses = []
     total_val_losses = []
@@ -177,4 +167,6 @@ def run(
         verbose=verbose,
         scheduler=scheduler,
     )
-    return train_losses, val_losses, model
+    model.eval()
+    y_pred = model(torch.from_numpy(x.astype(np.float32)).to(device))
+    return train_losses, val_losses, y_pred.detach().cpu().numpy(), model

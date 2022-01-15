@@ -7,6 +7,7 @@ from data_preprocess.data_utils import get_processed_data
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import train_test_split
 
 
 def find_best_hyperparameter(
@@ -46,3 +47,18 @@ def train_forest_with_kfold(
         error += fold_error / kflod_n_splits
         fold_errors.append(fold_error)
     return error, fold_errors
+
+
+def train_forest(x, y, test_size=0.2, **best_params):
+    x_train, x_test, y_train, y_test = train_test_split(
+        x,
+        y,
+        test_size=test_size,
+        random_state=1,
+    )
+    regressor = RandomForestRegressor(**best_params)
+    regressor = regressor.fit(x_train, y_train)
+    pred = regressor.predict(x_test)
+    error = mean_squared_error(y_test, pred) ** 0.5
+    y_pred = regressor.predict(x)
+    return error, y_pred

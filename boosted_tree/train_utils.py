@@ -5,6 +5,7 @@ import numpy as np
 from data_preprocess.data_utils import get_processed_data
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
+from sklearn.model_selection import train_test_split
 
 from xgboost import XGBRegressor
 
@@ -71,6 +72,26 @@ def train_with_kfold(x, y, params, n_splits):
         mean_val_loss += error / n_splits
         kfold_errors.append(error)
     return mean_val_loss, kfold_errors
+
+
+def train(x, y, params, test_size):
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=test_size, random_state=1
+    )
+    evaluation = [(x_test, y_test)]
+    model = XGBRegressor(**params)
+    model.fit(
+        x_train,
+        y_train,
+        eval_set=evaluation,
+        eval_metric="rmse",
+        early_stopping_rounds=10,
+        verbose=False,
+    )
+    pred = model.predict(x_test)
+    error = mean_squared_error(y_test, pred) ** 0.5
+    y_pred = model.predict(x)
+    return error, y_pred
 
 
 def find_best_params(x, y, params_gen=param_generator()):
